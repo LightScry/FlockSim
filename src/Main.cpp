@@ -1,12 +1,10 @@
 #include "Manager.h"
-#include "Manager.h"
-#include "Manager.h"
-#include "Manager.h"
-#include "Manager.h"
-#include "Manager.h"
+#include "Algo.h"
+#include "Graph.h"
+#include "GUI.h"
+#include "Node.h"
 
-#include <stdio.h>
 int main( int argc, const char* argv[] )
 {
-	printf( "\nHello Flock\n\n" );
+	Manager::gameLoop();
 }
