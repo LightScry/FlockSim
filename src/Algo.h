@@ -5,5 +5,8 @@ class Algo {
 /*
 Algo
 	- Params
-	- Could include algorithm functions for more complex scenarios
+	* We could use this as an abstract class:
+       		- update(Graph g)
+		* children implement different flocking algorithms
+		* this would mean Graph is basically just a data structure
 */
