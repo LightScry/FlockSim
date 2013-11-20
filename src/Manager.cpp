@@ -1,4 +1,5 @@
 #include "Manager.h"
+#include "Graph.h"
 
 #include <stdio.h>
 #include <chrono>

@@ -1,3 +1,7 @@
+#ifndef MANAGER_H
+#define MANAGER_H
+
+
 class Manager {
 	//do we really want the manager to store these? or should it just
 	//initialize an Algo that deals with them? only place we actually
@@ -9,6 +13,8 @@ class Manager {
 	 	static void gameLoop();
 	 	static void update();
 };
+
+#endif
 
 /*
 Manager
