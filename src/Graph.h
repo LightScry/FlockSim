@@ -15,6 +15,7 @@ class Graph {
 	void addNode();
 	void addNode(Node &n);
 	void addNode(fvec &pos, fvec &vel);
+	void removeNode(int index);
 
 	public:
 		Graph() : alg() {}
