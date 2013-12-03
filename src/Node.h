@@ -1,15 +1,21 @@
-#define DIMENSION 3
+#ifndef NODE_H
+#define NODE_H
+#define DIMENSION 3 //number of dimensions through which to move
+#define MAXPOS 100 //arbitrary choice for size of our space
+
+//makes passing/returning these cleaner
+typedef float fvec[DIMENSION];
 
 class Node {
 	public:
-		int pos[DIMENSION];
-		int vel[DIMENSION];
+		float pos[DIMENSION];
+		float vel[DIMENSION];
 
-		Node() : pos(), vel() {}
-		//randomize() ?
-		//constructor with random initialization?
+		Node() : pos(), vel() {} //initialize with zeroes
+		Node(fvec &p, fvec &v);
 };
 
+#endif
 
 /*
 Node
