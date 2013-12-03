@@ -1,14 +1,16 @@
+#ifndef GRAPH_H
+#define GRAPH_H
 #include "Node.h"
-
 class Graph {
 	Algo alg;
 	//could switch to fixed arrays if we want to
-	std::vector<Node> nodes;
-	std::vector<std::vector<int> > edges;
+	static std::vector<Node> nodes;
+	static std::vector<std::vector<int> > edges;
 	public:
-		void update();
-		void updateLocal(int a, int b);
+		static void update();
+		static void updateLocal(int a, int b);
 };
+#endif
 
 /*
 Graph

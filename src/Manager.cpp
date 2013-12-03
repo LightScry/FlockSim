@@ -13,7 +13,7 @@ int Manager::CurrentSeperation = 0;
 int Manager::CurrentCohesion = 0;
 
 // Game loop Params
-int FPS = 30.0;
+const int FPS = 30.0;
 int tick = 0;
 void Manager::gameLoop(){
 	while(true){
@@ -33,4 +33,5 @@ void Manager::gameLoop(){
 
 void Manager::update(){
 	printf( "Updating Manager...\n" );
+	Graph.update();
 }
