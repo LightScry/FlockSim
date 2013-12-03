@@ -10,3 +10,4 @@ GUI
 	- Set goal
 	- Draw nodes? (alternately separate graphics/drawing class for this)
 //display first priority; GUI-based initialization/interaction secondary
+*/
