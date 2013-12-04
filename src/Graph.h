@@ -2,6 +2,7 @@
 #define GRAPH_H
 #include <vector>
 #include "Node.h"
+#include "Vector.h"
 #include "Algo.h"
 
 class Graph {
@@ -10,13 +11,16 @@ class Graph {
 	//could switch to fixed arrays if we want to
 	std::vector<Node> nodes;
 	std::vector<std::vector<float> > edges;
-	//edges[a][b] is the weight from nodes[a] to nodes[b]
+	//edges[a][b] is the weight of nodes[b] as seen by nodes[a]
 
 	void addNode();
 	void addNode(Node &n);
-	void addNode(fvec &pos, fvec &vel);
+	void addNode(vec &pos, vec &vel);
+	void addNode(dvec &pos, dvec &vel);
 	void removeNode(int index);
 
+	void updateVelocities();
+	void updatePositions(const double& timestep);
 	public:
 		Graph() : alg() {}
 		Graph(float sep, float coh, float ali) : alg(sep,coh,ali) {}

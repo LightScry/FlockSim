@@ -3,13 +3,13 @@
 #include "Node.h"
 
 class Algo {
-	float separation;
-	float cohesion;
-	float alignment;
+	double separation;
+	double cohesion;
+	double alignment;
 	public:
 		Algo() : separation(), cohesion(), alignment() {}
-		Algo(float sep, float coh, float ali) : separation(sep), cohesion(coh), alignment (ali) {}
-		float calcWeight(Node &a, Node &b);
+		Algo(double sep, double coh, double ali) : separation(sep), cohesion(coh), alignment (ali) {}
+		double calcWeight(Node &a, Node &b);
 };
 
 #endif
