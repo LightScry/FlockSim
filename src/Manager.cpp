@@ -8,6 +8,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <time.h> 
 typedef std::chrono::milliseconds milliseconds;
 
 // Static initialization
@@ -36,9 +37,28 @@ void Manager::gameLoop(){
 	}
 }
 
+
+void moveNodesRandomly(){
+	
+	srand (time(NULL));
+   /* generate secret number between 1 and 10: */
+	for( Node *n : Graph::nodes ){
+		int randNum1 = rand() % 4 + 1 - 2;
+		int randNum2 = rand() % 4 + 1 - 2;
+		n->pos[0] += randNum1;
+		n->pos[1] += randNum2;
+		
+		if( n->pos[0] > 500 ||  n->pos[0] < 0)
+			n->pos[0] = 250;
+		else if( n->pos[1] > 500 ||  n->pos[1] < 0 )
+			n->pos[1] = 200;
+	}
+}
+
 void Manager::update(){
 	printf( "Updating Manager...\n" );
 	Graph::update();
+	moveNodesRandomly();
 }
 
 void Manager::init(){
@@ -47,23 +67,20 @@ void Manager::init(){
 	Manager::gameLoop();
 }
 
+
 void Manager::writeNodes(){
 	//printf("Writing...");
 	std::ofstream myfile;
 	myfile.open ("node_data.json");
-	myfile << "{ \"nodes\":[" << std::endl;
 	for( Node *n : Graph::nodes ){
-		myfile << Manager::nodeToString(n) << std::endl;
+		myfile << Manager::nodeToString(n);
 	}
-	myfile << "]}";
 	myfile.close();
 }
 
 std::string Manager::nodeToString(Node * n){
 	std::stringstream ss;
-	//ss << "\"node\":{";
-	ss << "{\"pos\":[" << n->pos[0] << "," << n->pos[1] << "]},";
-	//ss << "},";
+	ss << n->pos[0] << "," << n->pos[1] << "|";
 	
 	std::string retString;
 	ss >> retString;

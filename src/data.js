@@ -1,22 +1,39 @@
-
 k = 2
 URL = "http://0.0.0.0:8000/node_data.json"
 
-$.getJSON(URL, function() {
-  alert("success");
-})
-.success(function() { alert("second success"); })
-.error(function(jqXHR, textStatus, errorThrown) {
-		x  = JSON.parse( jqXHR.responseText )
-        console.log(x)
-    })
-.complete(function() { alert("complete"); });
+var updatedData;
+var ctx = $('#canvas')[0].getContext("2d");
 
-var myJSONObject = {"bindings": [
-        {"ircEvent": "PRIVMSG", "method": "newURI", "regex": "^http://.*"},
-        {"ircEvent": "PRIVMSG", "method": "deleteURI", "regex": "^delete.*"},
-        {"ircEvent": "PRIVMSG", "method": "randomURI", "regex": "^random.*"}
-    ]
-};
-myJSONObject.bindings[0].method    // "newURI"
-console.log(myJSONObject.bindings[0].method)
+function sendRequest(){
+	$.ajax({
+	    url: URL,
+	    success: function (data) {
+			updatedData = data;
+	    },
+	    dataType: "html"
+	});
+}
+
+function drawNodes(){
+	var splitNodes = updatedData.split('|');
+	
+	ctx.clearRect(0, 0, canvas.width, canvas.height);
+	for(var x = 0; x < splitNodes.length; x ++){
+		var coords = splitNodes[x].split(',');
+		//draw a circle
+		ctx.beginPath();
+		ctx.fillStyle = "#00A308";
+		ctx.arc(coords[0],coords[1], 2, 0, Math.PI*2, true); 
+		ctx.closePath();
+		ctx.fill();
+	}
+}
+
+function updateData(){
+	tid = setTimeout(updateData, 50); // repeat myself
+	sendRequest();
+	//console.log(updatedData)
+	drawNodes();
+}
+
+updateData();
