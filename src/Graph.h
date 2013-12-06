@@ -1,34 +1,43 @@
 #ifndef GRAPH_H
 #define GRAPH_H
-#include <vector>
 #include "Node.h"
 #include "Vector.h"
 #include "Algo.h"
+#include <fstream>
+#include <vector>
 
 class Graph {
+	//TODO - Add boundary attributes?
+
 	Algo alg;
 
-	//could switch to fixed arrays if we want to
 	std::vector<Node> nodes;
-	std::vector<std::vector<float> > edges;
+	std::vector<std::vector<double> > edges;
 	//edges[a][b] is the weight of nodes[b] as seen by nodes[a]
 
-	void addNode();
-	void addNode(Node &n);
-	void addNode(vec &pos, vec &vel);
-	void addNode(dvec &pos, dvec &vel);
-	void removeNode(int index);
-
 	void updateVelocities();
-	void updatePositions(const double& timestep);
+	void updatePositions(double timestep);
+
 	public:
-		Graph() : alg() {}
-		Graph(float sep, float coh, float ali) : alg(sep,coh,ali) {}
+		Graph() : algo() {}
+		Graph(double sep, double coh, double ali) : alg(sep,coh,ali) {}
+		Graph(int numNodes) : algo() {init(numNodes)}
+		Graph(int numNodes, double sep, double coh, double ali) : alg(sep,coh,ali) {init(numNodes)}
 
-		void update();
-		void updateLocal(int a, int b);
+		void init(int numNodes);
+		//void initRandom(int numNodes);
+		
+		void addNode();
+		void addNode(Node &n);
+		void addNode(vec &pos, vec &vel);
+		void addNode(dvec &pos, dvec &vel);
+		void removeNode(int index);
+	
+		void update(double timestep);
+		void updateRandomMove(unsigned int seed);
+
+		void writeNodes(std::string filename);
 };
-
 #endif
 
 /*

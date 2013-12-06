@@ -1,5 +1,15 @@
 #include "Graph.h"
 
+void Graph::init(int numNodes){
+	//remove any existing nodes
+	nodes.clear();
+	
+	//add new nodes
+	for(int x = 0; x < numNodes; x ++){
+		addNode(Node());
+	}
+}
+
 void Graph::addNode(Node &n){
 	nodes.push_back(n);
 	edges.push_back(std::vector<float>());
@@ -16,10 +26,6 @@ void Graph::addNode(Node &n){
 		//to new node (from ith node)
 		edges[i].push_back(alg.calcWeight(nodes[i],nodes[index]));
 	}
-}
-
-void Graph::addNode(){
-	addNode(Node());
 }
 
 void Graph::addNode(vec &pos, vec &vel){
@@ -91,12 +97,37 @@ void Graph::updateVelocities(){
 	delete[] newVelocities;
 }
 
-void Graph::updatePositions(const double& timestep){
+void Graph::updatePositions(double timestep){
 	for (int i=0; i<nodes.size(); i++)
 		nodes[i].pos+=timestep*nodes[i].vel;
 }
 
-void Graph::update(const double& timestep){
+void Graph::update(double timestep){
 	updatePositions(timestep);
 	updateVelocities();
+}
+
+void Graph::updateRandomMove(unsigned int seed){
+	srand(seed);
+
+	for (Node n : nodes){
+		int randNum1 = rand() % 4 + 1 - 2;
+		int randNum2 = rand() % 4 + 1 - 2;
+		n.pos[0] += randNum1;
+		n.pos[1] += randNum2;
+
+		if (n.pos[0] > 500 || n.pos[0] < 0)
+			n.pos[0] = 250;
+		if (n.pos[1] > 500 || n.pos[1] < 0)
+			n.pos[1] = 200;
+	}
+}
+
+void Graph::writeNodes(std::string filename){
+	std::ofstream myfile;
+	myfile.open(filename);
+	for (Node n : nodes){
+		myfile << n.toString() << "|";
+	}
+	myfile.close();
 }
