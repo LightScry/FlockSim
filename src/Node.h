@@ -1,19 +1,22 @@
 #ifndef NODE_H
 #define NODE_H
-#define DIMENSION 3 //number of dimensions through which to move
-#define MAXPOS 100 //arbitrary choice for size of our space
-
-//makes passing/returning these cleaner
-typedef float fvec[DIMENSION];
+#include "Vector.h"
 
 class Node {
 	public:
-		float pos[DIMENSION];
-		float vel[DIMENSION];
+		vec pos;
+		vec vel;
 
 		Node() : pos(), vel() {} //initialize with zeroes
-		Node(fvec &p, fvec &v);
+		Node(vec &p, vec &v) {pos=p; vel=v;}
+		Node(dvec &p, dvec &v) : pos(p), vel(v) {}
+
+		std::string toString();
 };
+
+inline double distance(Node &a, Node&b){
+	return distance(a.pos, b.pos);
+}
 
 #endif
 

@@ -2,21 +2,23 @@
 #define MANAGER_H
 #include <stdio.h>
 #include <string>
-#import "Node.h"
+#include "Graph.h"
+#include "Node.h"
+
 class Manager {
 	//do we really want the manager to store these? or should it just
 	//initialize an Algo that deals with them? only place we actually
 	//need these values is in update(), wherever we decide to put that
 	static int CurrentAlignment;
-	static int CurrentSeperation;
+	static int CurrentSeparation;
 	static int CurrentCohesion;
+
+	static Graph g;
+
 	public:
 	 	static void gameLoop();
 	 	static void update();
-		static void writePositions();
 		static void init();
-		static void writeNodes();
-		static std::string nodeToString(Node *);
 };
 #endif
 

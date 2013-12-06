@@ -1,16 +1,42 @@
 #ifndef GRAPH_H
 #define GRAPH_H
 #include "Node.h"
+#include "Vector.h"
+#include "Algo.h"
+#include <fstream>
 #include <vector>
+
 class Graph {
-	//xAlgo alg;
+	//TODO - Add boundary attributes?
+
+	Algo alg;
+
+	std::vector<Node*> nodes;
+	std::vector<std::vector<double> > edges;
+	//edges[a][b] is the weight of nodes[b] as seen by nodes[a]
+
+	void updateVelocities();
+	void updatePositions(double timestep);
+
 	public:
-		//could switch to fixed arrays if we want to
-		static std::vector<Node *> nodes;
-		static std::vector<std::vector<int> > edges;
-		static void init();
-		static void update();
-		static void updateLocal(int a, int b);
+		Graph() : alg() {}
+		Graph(double sep, double coh, double ali) : alg(sep,coh,ali) {}
+		Graph(int numNodes) : alg() {init(numNodes);}
+		Graph(int numNodes, double sep, double coh, double ali) : alg(sep,coh,ali) {init(numNodes);}
+
+		void init(int numNodes);
+		//void initRandom(int numNodes);
+		
+		void addNode();
+		void addNode(Node* n);
+		void addNode(vec &pos, vec &vel);
+		void addNode(dvec &pos, dvec &vel);
+		void removeNode(int index);
+	
+		void update(double timestep);
+		void updateRandomMove(unsigned int seed);
+
+		void writeNodes(std::string filename);
 };
 #endif
 
