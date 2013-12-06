@@ -10,6 +10,8 @@ class Node {
 		Node() : pos(), vel() {} //initialize with zeroes
 		Node(vec &p, vec &v) {pos=p; vel=v;}
 		Node(dvec &p, dvec &v) : pos(p), vel(v) {}
+
+		string toString();
 };
 
 double distance(Node &a, Node&b){

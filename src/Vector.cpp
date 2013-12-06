@@ -43,3 +43,15 @@ double vec::magnitude(){
 	}
 	return sqrt(sum);
 }
+
+std::string vec::toString(){
+	std::stringstream ss;
+	//ss << "(";
+	for (int i=0; i<DIMENSION-1; i++)
+		ss << d[i] << ",";
+	ss << d[DIMENSION-1]; // << ")";
+
+	std::string retString;
+	ss >> retString;
+	return retString;
+}

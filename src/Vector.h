@@ -1,6 +1,7 @@
 #ifndef VECTOR_H
 #define VECTOR_H
-#define DIMENSION 3
+#define DIMENSION 2
+#include <sstream>
 
 //useful to typedef this for cleaner passing/returning by reference
 typedef double dvec[DIMENSION];
@@ -23,6 +24,9 @@ class vec {
 
 		//MATH
 		double magnitude();
+
+		//MISC
+		std::string toString();
 }
 
 inline vec operator+(vec lhs, const vec& rhs){
