@@ -1,4 +1,4 @@
-flags = -std=gnu++11 -stdlib=libc++
+flags = -std=gnu++11 #-stdlib=libc++
 
 # first define target file : account 
 #              dependencies are the object files that build the program

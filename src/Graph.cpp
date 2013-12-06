@@ -1,4 +1,5 @@
 #include "Graph.h"
+#include <cstdlib>
 
 void Graph::init(int numNodes){
 	//remove any existing nodes
@@ -6,13 +7,13 @@ void Graph::init(int numNodes){
 	
 	//add new nodes
 	for(int x = 0; x < numNodes; x ++){
-		addNode(Node());
+		addNode();
 	}
 }
 
-void Graph::addNode(Node &n){
+void Graph::addNode(Node* n){
 	nodes.push_back(n);
-	edges.push_back(std::vector<float>());
+	edges.push_back(std::vector<double>());
 	
 	int index = nodes.size()-1;
 	
@@ -28,21 +29,30 @@ void Graph::addNode(Node &n){
 	}
 }
 
+void Graph::addNode(){
+	addNode(new Node());
+}
+
 void Graph::addNode(vec &pos, vec &vel){
-	addNode(Node(pos,vel));
+	addNode(new Node(pos,vel));
 }
 
 void Graph::addNode(dvec &pos, dvec &vel){
-	addNode(Node(pos,vel));
+	addNode(new Node(pos,vel));
 }
 
-void Graph::removeNode(int index);
+void Graph::removeNode(int index){
+	//free memory
+	delete nodes[index];
+	//remove node
+	nodes.erase(nodes.begin() + index);
+
 	//remove edges from nodes[index]
-	edges.erase[index];	
+	edges.erase(edges.begin() + index);
 
 	for (int i=0; i<nodes.size(); i++){
 		//remove edges to nodes[index]
-		edges[i].erase(index);
+		edges[i].erase(edges[i].begin() + index);
 	}
 }
 
@@ -63,7 +73,7 @@ void Graph::updateVelocities(){
 
 	//now loop through again and calculate new velocity vectors
 	for (int i=0; i<numNodes; i++){
-		newVelocities[i]=nodes[i].vel;
+		newVelocities[i]=nodes[i]->vel;
 		vec avgPos;
 		double totalWeight;
 
@@ -74,24 +84,24 @@ void Graph::updateVelocities(){
 			//in alg
 			
 			//SEPARATION
-			newVelocities[i]+=edges[i][j]*alg.separation*(nodes[i].pos-nodes[j].pos);
+			newVelocities[i]+=edges[i][j]*alg.separation*(nodes[i]->pos-nodes[j]->pos);
 
 			//ALIGNMENT
-			newVelocities[i]+=edges[i][j]*alg.alignment*(nodes[j].vel-nodes[i].vel);
+			newVelocities[i]+=edges[i][j]*alg.alignment*(nodes[j]->vel-nodes[i]->vel);
 
 			//COHESION
-			avgPos+=edges[i][j]*nodes[j].pos;
+			avgPos+=edges[i][j]*nodes[j]->pos;
 			totalWeight+=edges[i][j];
 		}
 
 		//COHESION, continued
 		avgPos/=totalWeight; //weighted average
-		newVelocities[i]+=cohesion*(avgPos-nodes[i].pos)
+		newVelocities[i]+=alg.cohesion*(avgPos-nodes[i]->pos);
 	}
 
 	//now loop through a final time to update velocities
 	for (int i=0; i<numNodes; i++){
-		nodes[i].vel=newVelocities[i];
+		nodes[i]->vel=newVelocities[i];
 	}
 
 	delete[] newVelocities;
@@ -99,7 +109,7 @@ void Graph::updateVelocities(){
 
 void Graph::updatePositions(double timestep){
 	for (int i=0; i<nodes.size(); i++)
-		nodes[i].pos+=timestep*nodes[i].vel;
+		nodes[i]->pos+=timestep*nodes[i]->vel;
 }
 
 void Graph::update(double timestep){
@@ -110,24 +120,24 @@ void Graph::update(double timestep){
 void Graph::updateRandomMove(unsigned int seed){
 	srand(seed);
 
-	for (Node n : nodes){
+	for (Node* n : nodes){
 		int randNum1 = rand() % 4 + 1 - 2;
 		int randNum2 = rand() % 4 + 1 - 2;
-		n.pos[0] += randNum1;
-		n.pos[1] += randNum2;
+		n->pos[0] += randNum1;
+		n->pos[1] += randNum2;
 
-		if (n.pos[0] > 500 || n.pos[0] < 0)
-			n.pos[0] = 250;
-		if (n.pos[1] > 500 || n.pos[1] < 0)
-			n.pos[1] = 200;
+		if (n->pos[0] > 500 || n->pos[0] < 0)
+			n->pos[0] = 250;
+		if (n->pos[1] > 500 || n->pos[1] < 0)
+			n->pos[1] = 200;
 	}
 }
 
 void Graph::writeNodes(std::string filename){
 	std::ofstream myfile;
 	myfile.open(filename);
-	for (Node n : nodes){
-		myfile << n.toString() << "|";
+	for (Node* n : nodes){
+		myfile << n->toString() << "|";
 	}
 	myfile.close();
 }

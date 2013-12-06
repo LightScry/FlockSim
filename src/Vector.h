@@ -19,15 +19,15 @@ class vec {
 		vec& operator*=(const double& scalar);
 		vec& operator/=(const double& scalar);
 		vec& operator=(const vec& rhs);
-		float& operator[](int index) {return d[index];}
-		float operator[](int index) const {return d[index];}
+		double& operator[](int index) {return d[index];}
+		double operator[](int index) const {return d[index];}
 
 		//MATH
 		double magnitude();
 
 		//MISC
 		std::string toString();
-}
+};
 
 inline vec operator+(vec lhs, const vec& rhs){
 	lhs += rhs;
@@ -54,8 +54,9 @@ inline vec operator/(vec lhs, const double& scalar){
 	return lhs;
 }
 
-double distance(const vec& lhs, const vec& rhs){
-	return magnitude(lhs-rhs);
+//utility
+inline double distance(const vec& lhs, const vec& rhs){
+	return (lhs-rhs).magnitude();
 }
 
 #endif

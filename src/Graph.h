@@ -11,7 +11,7 @@ class Graph {
 
 	Algo alg;
 
-	std::vector<Node> nodes;
+	std::vector<Node*> nodes;
 	std::vector<std::vector<double> > edges;
 	//edges[a][b] is the weight of nodes[b] as seen by nodes[a]
 
@@ -19,16 +19,16 @@ class Graph {
 	void updatePositions(double timestep);
 
 	public:
-		Graph() : algo() {}
+		Graph() : alg() {}
 		Graph(double sep, double coh, double ali) : alg(sep,coh,ali) {}
-		Graph(int numNodes) : algo() {init(numNodes)}
-		Graph(int numNodes, double sep, double coh, double ali) : alg(sep,coh,ali) {init(numNodes)}
+		Graph(int numNodes) : alg() {init(numNodes);}
+		Graph(int numNodes, double sep, double coh, double ali) : alg(sep,coh,ali) {init(numNodes);}
 
 		void init(int numNodes);
 		//void initRandom(int numNodes);
 		
 		void addNode();
-		void addNode(Node &n);
+		void addNode(Node* n);
 		void addNode(vec &pos, vec &vel);
 		void addNode(dvec &pos, dvec &vel);
 		void removeNode(int index);

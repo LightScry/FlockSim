@@ -1,5 +1,5 @@
 #include "Vector.h"
-#include <math>
+#include <cmath>
 
 vec::vec(const dvec& dv){
 	for (int i=0; i<DIMENSION; i++)

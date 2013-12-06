@@ -2,14 +2,15 @@
 #define ALGO_H
 #include "Node.h"
 
-class Algo {
-	double separation;
-	double cohesion;
-	double alignment;
+class Algo { 
 	public:
+		double separation;
+		double cohesion;
+		double alignment;
+
 		Algo() : separation(), cohesion(), alignment() {}
 		Algo(double sep, double coh, double ali) : separation(sep), cohesion(coh), alignment (ali) {}
-		double calcWeight(Node &a, Node &b);
+		double calcWeight(Node* a, Node* b);
 };
 
 #endif

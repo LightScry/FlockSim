@@ -11,10 +11,10 @@ class Node {
 		Node(vec &p, vec &v) {pos=p; vel=v;}
 		Node(dvec &p, dvec &v) : pos(p), vel(v) {}
 
-		string toString();
+		std::string toString();
 };
 
-double distance(Node &a, Node&b){
+inline double distance(Node &a, Node&b){
 	return distance(a.pos, b.pos);
 }
 

@@ -16,6 +16,7 @@ typedef std::chrono::milliseconds milliseconds;
 int Manager::CurrentAlignment = 0;
 int Manager::CurrentSeparation = 0;
 int Manager::CurrentCohesion = 0;
+Graph Manager::g = Graph(NUM_NODES, CurrentSeparation, CurrentCohesion, CurrentAlignment);
 
 // Game loop Params
 const int FPS = 30.0;
@@ -48,6 +49,5 @@ void Manager::update(){
 
 void Manager::init(){
 	printf( "Manager init...\n" );
-	g = Graph(NUM_NODES, CurrentSeparation, CurrentCohesion, CurrentAlignment);
 	Manager::gameLoop();
 }
