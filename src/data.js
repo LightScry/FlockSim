@@ -1,5 +1,5 @@
 k = 2
-URL = "http://0.0.0.0:8000/node_data.json"
+URL = "127.0.0.1:8000/node_data.json"
 
 var updatedData;
 var ctx = $('#canvas')[0].getContext("2d");
