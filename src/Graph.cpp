@@ -95,8 +95,10 @@ void Graph::updateVelocities(){
 		}
 
 		//COHESION, continued
-		avgPos/=totalWeight; //weighted average
-		newVelocities[i]+=alg.cohesion*(avgPos-nodes[i]->pos);
+		if (totalWeight!=0.0){
+			avgPos/=totalWeight; //weighted average
+			newVelocities[i]+=alg.cohesion*(avgPos-nodes[i]->pos);
+		}
 	}
 
 	//now loop through a final time to update velocities

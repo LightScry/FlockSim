@@ -13,9 +13,9 @@
 typedef std::chrono::milliseconds milliseconds;
 
 // Static initialization
-int Manager::CurrentAlignment = 0;
-int Manager::CurrentSeparation = 0;
-int Manager::CurrentCohesion = 0;
+double Manager::CurrentAlignment = 0.0;
+double Manager::CurrentSeparation = 0.0;
+double Manager::CurrentCohesion = 0.0;
 Graph Manager::g = Graph(NUM_NODES, CurrentSeparation, CurrentCohesion, CurrentAlignment);
 
 // Game loop Params
@@ -41,10 +41,10 @@ void Manager::gameLoop(){
 
 void Manager::update(){
 	printf( "Updating Manager...\n" );
-	//g.update(1000.0/FPS);
+	g.update(1000.0/FPS);
 
 	//move node randomly
-	g.updateRandomMove(time(NULL));
+	//g.updateRandomMove(time(NULL));
 }
 
 void Manager::init(){

@@ -9,9 +9,9 @@ class Manager {
 	//do we really want the manager to store these? or should it just
 	//initialize an Algo that deals with them? only place we actually
 	//need these values is in update(), wherever we decide to put that
-	static int CurrentAlignment;
-	static int CurrentSeparation;
-	static int CurrentCohesion;
+	static double CurrentAlignment;
+	static double CurrentSeparation;
+	static double CurrentCohesion;
 
 	static Graph g;
 
