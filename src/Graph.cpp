@@ -59,7 +59,7 @@ void Graph::addNodeRandom(){
 	vec vel;
 	for (int i=0; i<DIMENSION; i++){
 		pos[i] = ((double) rand()/RAND_MAX) * 500;
-		vel[i] = ((double) rand()/RAND_MAX) * 500;
+		vel[i] = ((double) rand()/RAND_MAX) * 15 - 2.0;
 	}
 	addNode(new Node(pos,vel));
 }
@@ -133,8 +133,20 @@ void Graph::updateVelocities(){
 }
 
 void Graph::updatePositions(double timestep){
-	for (int i=0; i<nodes.size(); i++)
+	for (int i=0; i<nodes.size(); i++){
 		nodes[i]->pos+=timestep*nodes[i]->vel;
+
+		//bound-checking
+		//TODO: generalize for arbitrary bound
+		for (int j=0; j<DIMENSION; j++){
+			if (nodes[i]->pos[j] > 500.0){
+				nodes[i]->pos[j]-=500;
+			}
+			if (nodes[i]->pos[j] < 0.0){
+				nodes[i]->pos[j]+=500;
+			}
+		}
+	}
 }
 
 void Graph::update(double timestep){
