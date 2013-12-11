@@ -11,6 +11,19 @@ void Graph::init(int numNodes){
 	}
 }
 
+void Graph::initRandom(int numNodes, unsigned int seed){
+	//seed the rand
+	srand(seed);
+	
+	//remove any existing nodes
+	nodes.clear();
+	
+	//add new nodes
+	for(int x = 0; x < numNodes; x ++){
+		addNodeRandom();
+	}
+}
+
 void Graph::addNode(Node* n){
 	nodes.push_back(n);
 	edges.push_back(std::vector<double>());
@@ -38,6 +51,16 @@ void Graph::addNode(vec &pos, vec &vel){
 }
 
 void Graph::addNode(dvec &pos, dvec &vel){
+	addNode(new Node(pos,vel));
+}
+
+void Graph::addNodeRandom(){
+	vec pos;
+	vec vel;
+	for (int i=0; i<DIMENSION; i++){
+		pos[i] = ((double) rand()/RAND_MAX) * 500;
+		vel[i] = ((double) rand()/RAND_MAX) * 15 - 2.0;
+	}
 	addNode(new Node(pos,vel));
 }
 
@@ -95,8 +118,10 @@ void Graph::updateVelocities(){
 		}
 
 		//COHESION, continued
-		avgPos/=totalWeight; //weighted average
-		newVelocities[i]+=alg.cohesion*(avgPos-nodes[i]->pos);
+		if (totalWeight!=0.0){
+			avgPos/=totalWeight; //weighted average
+			newVelocities[i]+=alg.cohesion*(avgPos-nodes[i]->pos);
+		}
 	}
 
 	//now loop through a final time to update velocities
@@ -108,8 +133,20 @@ void Graph::updateVelocities(){
 }
 
 void Graph::updatePositions(double timestep){
-	for (int i=0; i<nodes.size(); i++)
+	for (int i=0; i<nodes.size(); i++){
 		nodes[i]->pos+=timestep*nodes[i]->vel;
+
+		//bound-checking
+		//TODO: generalize for arbitrary bound
+		for (int j=0; j<DIMENSION; j++){
+			if (nodes[i]->pos[j] > 500.0){
+				nodes[i]->pos[j]-=500;
+			}
+			if (nodes[i]->pos[j] < 0.0){
+				nodes[i]->pos[j]+=500;
+			}
+		}
+	}
 }
 
 void Graph::update(double timestep){
