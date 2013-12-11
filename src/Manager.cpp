@@ -16,7 +16,7 @@ typedef std::chrono::milliseconds milliseconds;
 double Manager::CurrentAlignment = 0.0;
 double Manager::CurrentSeparation = 0.0;
 double Manager::CurrentCohesion = 0.0;
-Graph Manager::g = Graph(NUM_NODES, CurrentSeparation, CurrentCohesion, CurrentAlignment);
+Graph Manager::g = Graph(NUM_NODES, CurrentSeparation, CurrentCohesion, CurrentAlignment, time(NULL));
 
 // Game loop Params
 const int FPS = 30.0;

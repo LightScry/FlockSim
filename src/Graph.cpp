@@ -11,6 +11,19 @@ void Graph::init(int numNodes){
 	}
 }
 
+void Graph::initRandom(int numNodes, unsigned int seed){
+	//seed the rand
+	srand(seed);
+	
+	//remove any existing nodes
+	nodes.clear();
+	
+	//add new nodes
+	for(int x = 0; x < numNodes; x ++){
+		addNodeRandom();
+	}
+}
+
 void Graph::addNode(Node* n){
 	nodes.push_back(n);
 	edges.push_back(std::vector<double>());
@@ -38,6 +51,16 @@ void Graph::addNode(vec &pos, vec &vel){
 }
 
 void Graph::addNode(dvec &pos, dvec &vel){
+	addNode(new Node(pos,vel));
+}
+
+void Graph::addNodeRandom(){
+	vec pos;
+	vec vel;
+	for (int i=0; i<DIMENSION; i++){
+		pos[i] = ((double) rand()/RAND_MAX) * 500;
+		vel[i] = ((double) rand()/RAND_MAX) * 500;
+	}
 	addNode(new Node(pos,vel));
 }
 

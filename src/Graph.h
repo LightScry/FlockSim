@@ -23,14 +23,16 @@ class Graph {
 		Graph(double sep, double coh, double ali) : alg(sep,coh,ali) {}
 		Graph(int numNodes) : alg() {init(numNodes);}
 		Graph(int numNodes, double sep, double coh, double ali) : alg(sep,coh,ali) {init(numNodes);}
+		Graph(int numNodes, double sep, double coh, double ali, unsigned int seed) : alg(sep,coh,ali) {initRandom(numNodes,seed);}
 
 		void init(int numNodes);
-		//void initRandom(int numNodes);
+		void initRandom(int numNodes, unsigned int seed);
 		
 		void addNode();
 		void addNode(Node* n);
 		void addNode(vec &pos, vec &vel);
 		void addNode(dvec &pos, dvec &vel);
+		void addNodeRandom();
 		void removeNode(int index);
 	
 		void update(double timestep);
