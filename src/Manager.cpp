@@ -10,14 +10,15 @@
 #include <string>
 #include <pthread.h>
 
-#define NUM_NODES 50
+#define NUM_NODES 150
 #define DATA_FILE "node_data.json"
+#define VERBOSE false
 typedef std::chrono::milliseconds milliseconds;
 
 // Static initialization
-double Manager::CurrentAlignment = 1.0 / 500;
-double Manager::CurrentSeparation = 1.0 / 500;
-double Manager::CurrentCohesion = 1.0 / 500;
+double Manager::CurrentAlignment = 20.0 / POS_BOUND;
+double Manager::CurrentSeparation = 10.0 / POS_BOUND;
+double Manager::CurrentCohesion = 10.0 / POS_BOUND;
 Graph Manager::g;
 
 // Game loop Params
@@ -34,7 +35,9 @@ void* Manager::gameLoop(void *data){
 		int time_to_sleep = 1000.0 / FPS;
 		tick ++;
 	   	std::this_thread::sleep_for(milliseconds(time_to_sleep));
-		//std::cout << "-------" << std::endl << "Tick:" << tick << std::endl;
+		
+		if (VERBOSE)
+			std::cout << "-------" << std::endl << "Tick:" << tick << std::endl;
 		
 		g.writeNodes(DATA_FILE);
 		
@@ -50,10 +53,15 @@ void catch_thread(){
 }
 
 void Manager::update(){
+	if (VERBOSE)
+		printf( "Updating Manager...\n" );
 	g.update(1.0/FPS);
 }
 
 void Manager::init(){
+	if (VERBOSE)
+		printf( "Manager init...\n" );
+
 	still_looping = true;
 	//run simulation on another thread
     pthread_create(&t, NULL, Manager::gameLoop, NULL);
@@ -82,7 +90,6 @@ void Manager::main(){
 	}
 	
 	std::cout << "Goodbye" << std::endl;
-	
 }
 
 

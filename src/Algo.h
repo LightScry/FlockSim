@@ -1,6 +1,7 @@
 #ifndef ALGO_H
 #define ALGO_H
 #include "Node.h"
+#define VISION_RADIUS 75.0
 
 class Algo { 
 	public:
@@ -11,6 +12,8 @@ class Algo {
 		Algo() : separation(), cohesion(), alignment() {}
 		Algo(double sep, double coh, double ali) : separation(sep), cohesion(coh), alignment (ali) {}
 		double calcWeight(Node* a, Node* b);
+		double calcWeightSq(Node* a, Node* b);
+		double calcWeightVs(Node* a, Node* b);
 };
 
 #endif

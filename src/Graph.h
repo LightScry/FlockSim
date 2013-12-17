@@ -5,10 +5,11 @@
 #include "Algo.h"
 #include <fstream>
 #include <vector>
+#define POS_BOUND 500.0
+#define MAX_SPEED POS_BOUND/10.0
+#define PERIODIC_BOUNDARIES true 
 
 class Graph {
-	//TODO - Add boundary attributes?
-
 	Algo alg;
 
 	std::vector<Node*> nodes;

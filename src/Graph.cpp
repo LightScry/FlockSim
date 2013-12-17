@@ -58,8 +58,8 @@ void Graph::addNodeRandom(){
 	vec pos;
 	vec vel;
 	for (int i=0; i<DIMENSION; i++){
-		pos[i] = ((double) rand()/RAND_MAX) * 500;
-		vel[i] = ((double) rand()/RAND_MAX) * 15 - 2.0;
+		pos[i] = ((double) rand()/RAND_MAX) * POS_BOUND;
+		vel[i] = ((double) rand()/RAND_MAX) * POS_BOUND/30 - POS_BOUND/60;
 	}
 	addNode(new Node(pos,vel));
 }
@@ -97,30 +97,44 @@ void Graph::updateVelocities(){
 	//now loop through again and calculate new velocity vectors
 	for (int i=0; i<numNodes; i++){
 		newVelocities[i]=nodes[i]->vel;
-		vec avgPos;
-		double totalWeight;
+		vec avgPos; //"center of mass"
+		vec avgVel; //average velocity
+		vec avgDisp;//average displacement (from nodes[i])
+		double totalWeight = 0.0;
 
 		for (int j=0; j<numNodes; j++){
 			//calculate contribute of node j to the new velocity
 			//of node i, based on [i,j] weight and the 
 			//separation, cohesion, and cohesion parameters stored
 			//in alg
-			
+
 			//SEPARATION
-			newVelocities[i]+=edges[i][j]*alg.separation*(nodes[i]->pos-nodes[j]->pos);
+			avgDisp+=edges[i][j]*(nodes[i]->pos-nodes[j]->pos);
 
 			//ALIGNMENT
-			newVelocities[i]+=edges[i][j]*alg.alignment*(nodes[j]->vel-nodes[i]->vel);
+			avgVel+=edges[i][j]*nodes[j]->vel;
 
 			//COHESION
 			avgPos+=edges[i][j]*nodes[j]->pos;
+
+			//weighting
 			totalWeight+=edges[i][j];
 		}
 
-		//COHESION, continued
+		//algorithm, continued
 		if (totalWeight!=0.0){
-			avgPos/=totalWeight; //weighted average
+			//weighted averages
+			avgPos/=totalWeight;
+			avgVel/=totalWeight;
+			avgDisp/=totalWeight;
 			newVelocities[i]+=alg.cohesion*(avgPos-nodes[i]->pos);
+			newVelocities[i]+=alg.separation*avgDisp;
+			newVelocities[i]+=alg.alignment*avgVel;
+
+			//normalize to maximum speed
+			double mag = newVelocities[i].magnitude();
+			if (mag > MAX_SPEED)
+				newVelocities[i]*=(MAX_SPEED/mag);
 		}
 	}
 
@@ -137,13 +151,34 @@ void Graph::updatePositions(double timestep){
 		nodes[i]->pos+=timestep*nodes[i]->vel;
 
 		//bound-checking
-		//TODO: generalize for arbitrary bound
 		for (int j=0; j<DIMENSION; j++){
-			if (nodes[i]->pos[j] > 500.0){
-				nodes[i]->pos[j]-=500;
+			if (nodes[i]->pos[j] > POS_BOUND){
+				//Periodic boundary (wrapping)
+				if (PERIODIC_BOUNDARIES){
+					nodes[i]->pos[j]-=POS_BOUND;
+				}
+				
+				//Reflective boundary
+				else {
+					//reflect
+					nodes[i]->vel[j]=-nodes[i]->vel[j];
+					//kick away
+					nodes[i]->pos[j]-=POS_BOUND/200.0;
+				}
 			}
 			if (nodes[i]->pos[j] < 0.0){
-				nodes[i]->pos[j]+=500;
+				//Periodic boundary (wrapping)
+				if (PERIODIC_BOUNDARIES){
+					nodes[i]->pos[j]+=POS_BOUND;
+				}
+				
+				//Reflective boundary
+				else {
+					//reflect
+					nodes[i]->vel[j]=-nodes[i]->vel[j];
+					//kick away
+					nodes[i]->pos[j]+=POS_BOUND/200.0;
+				}
 			}
 		}
 	}
@@ -163,10 +198,10 @@ void Graph::updateRandomMove(unsigned int seed){
 		n->pos[0] += randNum1;
 		n->pos[1] += randNum2;
 
-		if (n->pos[0] > 500 || n->pos[0] < 0)
-			n->pos[0] = 250;
-		if (n->pos[1] > 500 || n->pos[1] < 0)
-			n->pos[1] = 200;
+		if (n->pos[0] > POS_BOUND || n->pos[0] < 0)
+			n->pos[0] = POS_BOUND/2;
+		if (n->pos[1] > POS_BOUND || n->pos[1] < 0)
+			n->pos[1] = POS_BOUND/3;
 	}
 }
 
