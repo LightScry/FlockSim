@@ -5,5 +5,5 @@
 
 int main( int argc, const char* argv[] )
 {
-	Manager::init();
+	Manager::main();
 }
