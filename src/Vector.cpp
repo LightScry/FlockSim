@@ -44,6 +44,11 @@ double vec::magnitude(){
 	return sqrt(sum);
 }
 
+vec& vec::normalize(){
+	(*this)/=this->magnitude();
+	return *this;
+}
+
 std::string vec::toString(){
 	std::stringstream ss;
 	//ss << "(";
