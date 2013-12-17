@@ -7,7 +7,7 @@ void Graph::init(int numNodes){
 	
 	//add new nodes
 	for(int x = 0; x < numNodes; x ++){
-		addNode();
+		addNode(node_norm);
 	}
 	
 	Node *targetNode = new Node();
@@ -22,12 +22,11 @@ void Graph::initRandom(int numNodes, unsigned int seed){
 	
 	//add new nodes
 	for(int x = 0; x < numNodes; x ++){
-		addNodeRandom();
+		addNodeRandom(node_norm);
 	}
 	
 	// add target node
-	Node *targetNode = newNodeRandom();
-	targetNode->type = node_goal;
+	Node *targetNode = newNodeRandom(node_goal);
 	for(int i = 0;i < DIMENSION; i ++)
 		targetNode->vel[i] = 0;
 	addNode(targetNode);
@@ -51,33 +50,32 @@ void Graph::addNode(Node* n){
 	}
 }
 
-void Graph::addNode(){
-	Node *node = new Node();
-	node->type = node_norm;
+void Graph::addNode(node_type type){
+	Node *node = new Node(type);
 	addNode(node);
 }
 
-void Graph::addNode(vec &pos, vec &vel){
-	addNode(new Node(pos,vel));
+void Graph::addNode(vec &pos, vec &vel, node_type type){
+	addNode(new Node(pos,vel,type));
 }
 
-void Graph::addNode(dvec &pos, dvec &vel){
-	addNode(new Node(pos,vel));
+void Graph::addNode(dvec &pos, dvec &vel, node_type type){
+	addNode(new Node(pos,vel,type));
 }
 
-Node *Graph::newNodeRandom(){
+Node *Graph::newNodeRandom(node_type type){
 	vec pos;
 	vec vel;
 	for (int i=0; i<DIMENSION; i++){
 		pos[i] = ((double) rand()/RAND_MAX) * POS_BOUND;
 		vel[i] = ((double) rand()/RAND_MAX) * POS_BOUND/30 - POS_BOUND/60;
 	}
-	Node* newNode = new Node(pos,vel);
+	Node* newNode = new Node(pos,vel,type);
 	return newNode;
 }
 
-void Graph::addNodeRandom(){
-	addNode(Graph::newNodeRandom());
+void Graph::addNodeRandom(node_type type){
+	addNode(Graph::newNodeRandom(type));
 }
 
 void Graph::removeNode(int index){
@@ -116,13 +114,24 @@ void Graph::updateVelocities(){
 		vec avgPos; //"center of mass"
 		vec avgVel; //average velocity
 		vec avgDisp;//average displacement (from nodes[i])
-        double goalWeight = 1.2;
-		bool separate = false;
+		vec avgFlee; //run away from the predator(s)!
+
+	        double goalWeight = 1.2;
 		double totalWeight = 0.0;
 		double sepWeight = 0.0;
+		double fleeWeight = 0.0;
 		
 		for (int j=0; j<numNodes; j++){
 			if (j==i) continue;
+			
+			//do we need to run away?
+			if (nodes[j]->type==node_pred){
+				avgFlee+=edges[i][j]*(nodes[i]->pos-nodes[j]->pos);
+				fleeWeight+=edges[i][j];
+				continue;
+			}
+
+
 			//calculate contribute of node j to the new velocity
 			//of node i, based on [i,j] weight and the 
 			//separation, cohesion, and cohesion parameters stored
@@ -132,7 +141,6 @@ void Graph::updateVelocities(){
 				//SEPARATION
 				avgDisp+=edges[i][j]*(nodes[i]->pos-nodes[j]->pos);
 				sepWeight+=edges[i][j];
-				separate=true;
 			}
 			
 			//ALIGNMENT
@@ -144,7 +152,7 @@ void Graph::updateVelocities(){
 			//weighting
 			if(nodes[i]->type == node_goal)
 				totalWeight+=edges[i][j] * goalWeight;
-			else if(nodes[i]->type == node_norm)
+			else if(nodes[i]->type == node_norm || nodes[i]->type == node_pred)
 				totalWeight+=edges[i][j]; // multiply by 1.0
 		}
 
@@ -154,19 +162,26 @@ void Graph::updateVelocities(){
 			avgPos/=totalWeight;
 			avgVel/=totalWeight;
 
-			if (separate){
-				avgDisp/=sepWeight;
-				newVelocities[i]+=alg.separation*avgDisp;
+			//predator movement
+			if (nodes[i]->type==node_pred){
+				newVelocities[i]+=alg.cohesion*30.0*(avgPos-nodes[i]->pos);
+				normToMax(newVelocities[i], MAX_SPEED*1.1);
 			}
-			//else {
+
+			//prey movement
+			else if (nodes[i]->type==node_norm){
+				if (fleeWeight > 0.0){
+					avgFlee/=fleeWeight;
+					newVelocities[i]+=alg.flee*avgFlee;
+				}
+				if (sepWeight > 0.0){
+					avgDisp/=sepWeight;
+					newVelocities[i]+=alg.separation*avgDisp;
+				}
 				newVelocities[i]+=alg.cohesion*(avgPos-nodes[i]->pos);
 				newVelocities[i]+=alg.alignment*avgVel;
-			//}
-			
-			//normalize to maximum speed (if needed)
-			double mag = newVelocities[i].magnitude();
-			if (mag > MAX_SPEED)
-				newVelocities[i]*=(MAX_SPEED/mag);
+				normToMax(newVelocities[i], MAX_SPEED);
+			}
 		}
 	}
 
@@ -176,6 +191,13 @@ void Graph::updateVelocities(){
 	}
 
 	delete[] newVelocities;
+}
+
+void Graph::normToMax(vec& v, double max){
+	double mag = v.magnitude();
+	if (mag > max)
+		v*=(max/mag);
+	return;
 }
 
 void Graph::updatePositions(double timestep){
