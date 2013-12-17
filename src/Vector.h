@@ -24,6 +24,7 @@ class vec {
 
 		//MATH
 		double magnitude();
+		vec& normalize();
 
 		//MISC
 		std::string toString();

@@ -94,44 +94,59 @@ void Graph::updateVelocities(){
 		}
 	}
 
+	
 	//now loop through again and calculate new velocity vectors
 	for (int i=0; i<numNodes; i++){
 		newVelocities[i]=nodes[i]->vel;
 		vec avgPos; //"center of mass"
 		vec avgVel; //average velocity
 		vec avgDisp;//average displacement (from nodes[i])
-		double totalWeight = 0.0;
 
+		bool separate = false;
+		double totalWeight = 0.0;
+		double sepWeight = 0.0;
+		
 		for (int j=0; j<numNodes; j++){
+			if (j==i) continue;
 			//calculate contribute of node j to the new velocity
 			//of node i, based on [i,j] weight and the 
 			//separation, cohesion, and cohesion parameters stored
 			//in alg
 
-			//SEPARATION
-			avgDisp+=edges[i][j]*(nodes[i]->pos-nodes[j]->pos);
-
+			if ((nodes[i]->pos-nodes[j]->pos).magnitude() < SEPARATION_RADIUS){
+				//SEPARATION
+				avgDisp+=edges[i][j]*(nodes[i]->pos-nodes[j]->pos);
+				sepWeight+=edges[i][j];
+				separate=true;
+			}
+			
+					
 			//ALIGNMENT
 			avgVel+=edges[i][j]*nodes[j]->vel;
-
+			
 			//COHESION
 			avgPos+=edges[i][j]*nodes[j]->pos;
-
+	
 			//weighting
 			totalWeight+=edges[i][j];
 		}
 
 		//algorithm, continued
-		if (totalWeight!=0.0){
+		if (totalWeight > 0.0){
 			//weighted averages
 			avgPos/=totalWeight;
 			avgVel/=totalWeight;
-			avgDisp/=totalWeight;
-			newVelocities[i]+=alg.cohesion*(avgPos-nodes[i]->pos);
-			newVelocities[i]+=alg.separation*avgDisp;
-			newVelocities[i]+=alg.alignment*avgVel;
 
-			//normalize to maximum speed
+			if (separate){
+				avgDisp/=sepWeight;
+				newVelocities[i]+=alg.separation*avgDisp;
+			}
+			//else {
+				newVelocities[i]+=alg.cohesion*(avgPos-nodes[i]->pos);
+				newVelocities[i]+=alg.alignment*avgVel;
+			//}
+			
+			//normalize to maximum speed (if needed)
 			double mag = newVelocities[i].magnitude();
 			if (mag > MAX_SPEED)
 				newVelocities[i]*=(MAX_SPEED/mag);
