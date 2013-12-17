@@ -8,14 +8,15 @@
 #include <sstream>
 #include <time.h> 
 
-#define NUM_NODES 50
+#define NUM_NODES 150
 #define DATA_FILE "node_data.json"
+#define VERBOSE false
 typedef std::chrono::milliseconds milliseconds;
 
 // Static initialization
 double Manager::CurrentAlignment = 20.0 / POS_BOUND;
-double Manager::CurrentSeparation = 20.0 / POS_BOUND;
-double Manager::CurrentCohesion = 20.0 / POS_BOUND;
+double Manager::CurrentSeparation = 10.0 / POS_BOUND;
+double Manager::CurrentCohesion = 10.0 / POS_BOUND;
 Graph Manager::g = Graph(NUM_NODES, CurrentSeparation, CurrentCohesion, CurrentAlignment, time(NULL));
 
 // Game loop Params
@@ -30,7 +31,9 @@ void Manager::gameLoop(){
 		int time_to_sleep = 1000.0 / FPS;
 		tick ++;
 	   	std::this_thread::sleep_for(milliseconds(time_to_sleep));
-		std::cout << "-------" << std::endl << "Tick:" << tick << std::endl;
+		
+		if (VERBOSE)
+			std::cout << "-------" << std::endl << "Tick:" << tick << std::endl;
 		
 		g.writeNodes(DATA_FILE);
 		
@@ -40,7 +43,8 @@ void Manager::gameLoop(){
 }
 
 void Manager::update(){
-	printf( "Updating Manager...\n" );
+	if (VERBOSE)
+		printf( "Updating Manager...\n" );
 	g.update(1.0/FPS);
 
 	//move node randomly
@@ -48,6 +52,7 @@ void Manager::update(){
 }
 
 void Manager::init(){
-	printf( "Manager init...\n" );
+	if (VERBOSE)
+		printf( "Manager init...\n" );
 	Manager::gameLoop();
 }

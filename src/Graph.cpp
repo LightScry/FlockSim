@@ -107,17 +107,11 @@ void Graph::updateVelocities(){
 			//of node i, based on [i,j] weight and the 
 			//separation, cohesion, and cohesion parameters stored
 			//in alg
-			
+
 			//SEPARATION
-			//newVelocities[i]+=edges[i][j]*alg.separation*(nodes[i]->pos-nodes[j]->pos);
-
-			//ALIGNMENT
-			//newVelocities[i]+=edges[i][j]*alg.alignment*(nodes[j]->vel-nodes[i]->vel);
-
-			//SEPARATIONv2
 			avgDisp+=edges[i][j]*(nodes[i]->pos-nodes[j]->pos);
 
-			//ALIGNMENTv2
+			//ALIGNMENT
 			avgVel+=edges[i][j]*nodes[j]->vel;
 
 			//COHESION
@@ -127,9 +121,10 @@ void Graph::updateVelocities(){
 			totalWeight+=edges[i][j];
 		}
 
-		//COHESION, continued
+		//algorithm, continued
 		if (totalWeight!=0.0){
-			avgPos/=totalWeight; //weighted average
+			//weighted averages
+			avgPos/=totalWeight;
 			avgVel/=totalWeight;
 			avgDisp/=totalWeight;
 			newVelocities[i]+=alg.cohesion*(avgPos-nodes[i]->pos);
@@ -159,17 +154,31 @@ void Graph::updatePositions(double timestep){
 		for (int j=0; j<DIMENSION; j++){
 			if (nodes[i]->pos[j] > POS_BOUND){
 				//Periodic boundary (wrapping)
-				//nodes[i]->pos[j]-=POS_BOUND;
+				if (PERIODIC_BOUNDARIES){
+					nodes[i]->pos[j]-=POS_BOUND;
+				}
 				
 				//Reflective boundary
-				nodes[i]->vel[j]=-nodes[i]->vel[j];
+				else {
+					//reflect
+					nodes[i]->vel[j]=-nodes[i]->vel[j];
+					//kick away
+					nodes[i]->pos[j]-=POS_BOUND/200.0;
+				}
 			}
 			if (nodes[i]->pos[j] < 0.0){
 				//Periodic boundary (wrapping)
-				//nodes[i]->pos[j]+=POS_BOUND;
+				if (PERIODIC_BOUNDARIES){
+					nodes[i]->pos[j]+=POS_BOUND;
+				}
 				
 				//Reflective boundary
-				nodes[i]->vel[j]=-nodes[i]->vel[j];
+				else {
+					//reflect
+					nodes[i]->vel[j]=-nodes[i]->vel[j];
+					//kick away
+					nodes[i]->pos[j]+=POS_BOUND/200.0;
+				}
 			}
 		}
 	}
