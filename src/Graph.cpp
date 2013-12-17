@@ -109,13 +109,13 @@ void Graph::updateVelocities(){
 			//in alg
 			
 			//SEPARATION
-			//newVelocities[i]+=edges[i][j]*alg.separation*(nodes[j]->pos-nodes[i]->pos);
+			//newVelocities[i]+=edges[i][j]*alg.separation*(nodes[i]->pos-nodes[j]->pos);
 
 			//ALIGNMENT
 			//newVelocities[i]+=edges[i][j]*alg.alignment*(nodes[j]->vel-nodes[i]->vel);
 
 			//SEPARATIONv2
-			avgDisp+=edges[i][j]*(nodes[j]->pos-nodes[i]->pos);
+			avgDisp+=edges[i][j]*(nodes[i]->pos-nodes[j]->pos);
 
 			//ALIGNMENTv2
 			avgVel+=edges[i][j]*nodes[j]->vel;
