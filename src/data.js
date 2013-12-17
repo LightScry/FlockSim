@@ -25,10 +25,13 @@ function drawNodes(){
 		var color  = "#00A308";
 		var size = 2;
 		var coords = splitNodes[x].split(',');
-		if(x == splitNodes.length-1){
+		
+		// Target node displayed differently
+		if(x == splitNodes.length-2){
 			color = "#7700ff";
 			size = 4;
 		}
+		
 		//draw a circle
 		ctx.beginPath();
 		ctx.fillStyle = color;

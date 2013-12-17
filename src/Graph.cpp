@@ -1,5 +1,7 @@
 #include "Graph.h"
 #include <cstdlib>
+#include <iostream>
+#include <math.h>
 
 void Graph::init(int numNodes){
 	//remove any existing nodes
@@ -116,7 +118,7 @@ void Graph::updateVelocities(){
 		vec avgPos; //"center of mass"
 		vec avgVel; //average velocity
 		vec avgDisp;//average displacement (from nodes[i])
-        double goalWeight = 1.2;
+        double goalWeight = 1.0;
 		bool separate = false;
 		double totalWeight = 0.0;
 		double sepWeight = 0.0;
@@ -141,11 +143,13 @@ void Graph::updateVelocities(){
 			//COHESION
 			avgPos+=edges[i][j]*nodes[j]->pos;
 	
+			totalWeight+=edges[i][j];
+			
 			//weighting
-			if(nodes[i]->type == node_goal)
+			/*if(nodes[i]->type == node_goal)
 				totalWeight+=edges[i][j] * goalWeight;
 			else if(nodes[i]->type == node_norm)
-				totalWeight+=edges[i][j]; // multiply by 1.0
+				totalWeight+=edges[i][j]; // multiply by 1.0*/
 		}
 
 		//algorithm, continued
@@ -161,6 +165,8 @@ void Graph::updateVelocities(){
 			//else {
 				newVelocities[i]+=alg.cohesion*(avgPos-nodes[i]->pos);
 				newVelocities[i]+=alg.alignment*avgVel;
+				
+					newVelocities[i]+=alg.cohesion*(nodes[nodes.size()-1]->pos - avgPos) * goalWeight;
 			//}
 			
 			//normalize to maximum speed (if needed)
@@ -179,9 +185,13 @@ void Graph::updateVelocities(){
 }
 
 void Graph::updatePositions(double timestep){
+	//Node* targetNode = nodes[nodes.size()-1];
+	//std::cout << "TARGET NODE:" << targetNode->pos[0] << "," << targetNode->pos[1] << std::endl;
 	for (int i=0; i<nodes.size(); i++){
+		if(nodes[i]->type == node_goal)	continue;	
+		
 		nodes[i]->pos+=timestep*nodes[i]->vel;
-
+		
 		//bound-checking
 		for (int j=0; j<DIMENSION; j++){
 			// Skip goal node

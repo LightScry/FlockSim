@@ -1,7 +1,7 @@
 #ifndef ALGO_H
 #define ALGO_H
 #include "Node.h"
-#define VISION_RADIUS 50.0
+#define VISION_RADIUS 200.0
 #define SEPARATION_RADIUS 10.0
 
 class Algo { 
