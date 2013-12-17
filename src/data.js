@@ -3,6 +3,8 @@ URL = "http://127.0.0.1:8000/node_data.json"
 
 var updatedData;
 var ctx = $('#canvas')[0].getContext("2d");
+var WIDTH = ctx.width
+var HEIGHT = ctx.height
 
 function sendRequest(){
 	$.ajax({
@@ -21,6 +23,7 @@ function drawNodes(){
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 	for(var x = 0; x < splitNodes.length; x ++){
 		var coords = splitNodes[x].split(',');
+		
 		//draw a circle
 		ctx.beginPath();
 		ctx.fillStyle = "#00A308";

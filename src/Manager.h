@@ -16,9 +16,10 @@ class Manager {
 	static Graph g;
 
 	public:
-	 	static void gameLoop();
+	 	static void* gameLoop(void *data);
 	 	static void update();
 		static void init();
+		static void main();
 };
 #endif
 

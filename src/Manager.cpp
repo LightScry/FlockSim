@@ -7,6 +7,8 @@
 #include <fstream>
 #include <sstream>
 #include <time.h> 
+#include <string>
+#include <pthread.h>
 
 #define NUM_NODES 50
 #define DATA_FILE "node_data.json"
@@ -16,13 +18,15 @@ typedef std::chrono::milliseconds milliseconds;
 double Manager::CurrentAlignment = 1.0 / 500;
 double Manager::CurrentSeparation = 1.0 / 500;
 double Manager::CurrentCohesion = 1.0 / 500;
-Graph Manager::g = Graph(NUM_NODES, CurrentSeparation, CurrentCohesion, CurrentAlignment, time(NULL));
+Graph Manager::g;
 
 // Game loop Params
+int still_looping = 1;
 const int FPS = 30.0;
 int tick = 0;
-void Manager::gameLoop(){
-	while(true){
+pthread_t t;
+void* Manager::gameLoop(void *data){
+	while(still_looping){
 		// Sleep this thread depending on desired FPS.
 		// NOTE: 	Sleeping thread here may prove VERY inefficient.
 		//			If performance issues happen, break into 2 threads
@@ -30,24 +34,56 @@ void Manager::gameLoop(){
 		int time_to_sleep = 1000.0 / FPS;
 		tick ++;
 	   	std::this_thread::sleep_for(milliseconds(time_to_sleep));
-		std::cout << "-------" << std::endl << "Tick:" << tick << std::endl;
+		//std::cout << "-------" << std::endl << "Tick:" << tick << std::endl;
 		
 		g.writeNodes(DATA_FILE);
 		
 		// Update all Managers once per tick
 		Manager::update();
 	}
+	std::cout << "Exited gameLoop" << std::endl;
+	return 0;
+}
+
+void catch_thread(){
+	pthread_join(t, NULL);
 }
 
 void Manager::update(){
-	printf( "Updating Manager...\n" );
 	g.update(1.0/FPS);
-
-	//move node randomly
-	//g.updateRandomMove(time(NULL));
 }
 
 void Manager::init(){
-	printf( "Manager init...\n" );
-	Manager::gameLoop();
+	still_looping = true;
+	//run simulation on another thread
+    pthread_create(&t, NULL, Manager::gameLoop, NULL);
+	Manager::g = Graph(NUM_NODES, CurrentSeparation, CurrentCohesion, CurrentAlignment, time(NULL));
 }
+
+void Manager::main(){
+	Manager::init();
+	
+	while(true){
+		std::string input; 
+		std::cout << "Enter Command: ";
+		std::cin >> input;
+		//std::cout << "out:" << input.compare("exit") << std::endl;
+		
+		if (input.compare("exit") == 0){
+			still_looping = false;
+			catch_thread();
+			break;
+		}
+		else if (input.compare("restart") == 0){
+			still_looping = false;
+			catch_thread();
+			Manager::init();
+		}
+	}
+	
+	std::cout << "Goodbye" << std::endl;
+	
+}
+
+
+
