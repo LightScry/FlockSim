@@ -9,6 +9,8 @@ void Graph::init(int numNodes){
 	for(int x = 0; x < numNodes; x ++){
 		addNode();
 	}
+	
+	Node *targetNode = new Node();
 }
 
 void Graph::initRandom(int numNodes, unsigned int seed){
@@ -22,6 +24,13 @@ void Graph::initRandom(int numNodes, unsigned int seed){
 	for(int x = 0; x < numNodes; x ++){
 		addNodeRandom();
 	}
+	
+	// add target node
+	Node *targetNode = newNodeRandom();
+	targetNode->type = node_goal;
+	for(int i = 0;i < DIMENSION; i ++)
+		targetNode->vel[i] = 0;
+	addNode(targetNode);
 }
 
 void Graph::addNode(Node* n){
@@ -43,7 +52,9 @@ void Graph::addNode(Node* n){
 }
 
 void Graph::addNode(){
-	addNode(new Node());
+	Node *node = new Node();
+	node->type = node_norm;
+	addNode(node);
 }
 
 void Graph::addNode(vec &pos, vec &vel){
@@ -54,14 +65,19 @@ void Graph::addNode(dvec &pos, dvec &vel){
 	addNode(new Node(pos,vel));
 }
 
-void Graph::addNodeRandom(){
+Node *Graph::newNodeRandom(){
 	vec pos;
 	vec vel;
 	for (int i=0; i<DIMENSION; i++){
 		pos[i] = ((double) rand()/RAND_MAX) * POS_BOUND;
 		vel[i] = ((double) rand()/RAND_MAX) * POS_BOUND/30 - POS_BOUND/60;
 	}
-	addNode(new Node(pos,vel));
+	Node* newNode = new Node(pos,vel);
+	return newNode;
+}
+
+void Graph::addNodeRandom(){
+	addNode(Graph::newNodeRandom());
 }
 
 void Graph::removeNode(int index){
@@ -78,7 +94,6 @@ void Graph::removeNode(int index){
 		edges[i].erase(edges[i].begin() + index);
 	}
 }
-
 
 void Graph::updateVelocities(){
 	int numNodes = nodes.size();
@@ -101,13 +116,14 @@ void Graph::updateVelocities(){
 		vec avgVel; //average velocity
 		vec avgDisp;//average displacement (from nodes[i])
 		double totalWeight = 0.0;
+		double goalWeight = 1.2;
 
 		for (int j=0; j<numNodes; j++){
 			//calculate contribute of node j to the new velocity
 			//of node i, based on [i,j] weight and the 
 			//separation, cohesion, and cohesion parameters stored
 			//in alg
-
+			
 			//SEPARATION
 			avgDisp+=edges[i][j]*(nodes[i]->pos-nodes[j]->pos);
 
@@ -118,7 +134,10 @@ void Graph::updateVelocities(){
 			avgPos+=edges[i][j]*nodes[j]->pos;
 
 			//weighting
-			totalWeight+=edges[i][j];
+			if(nodes[i]->type == node_goal)
+				totalWeight+=edges[i][j] * goalWeight;
+			else if(nodes[i]->type == node_norm)
+				totalWeight+=edges[i][j]; // multiply by 1.0
 		}
 
 		//algorithm, continued
@@ -152,6 +171,10 @@ void Graph::updatePositions(double timestep){
 
 		//bound-checking
 		for (int j=0; j<DIMENSION; j++){
+			// Skip goal node
+			if (nodes[i]->type == node_goal)
+				continue;
+			
 			if (nodes[i]->pos[j] > POS_BOUND){
 				//Periodic boundary (wrapping)
 				if (PERIODIC_BOUNDARIES){

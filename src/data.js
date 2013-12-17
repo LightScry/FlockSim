@@ -11,7 +11,7 @@ function sendRequest(){
 	    url: URL,
 	    success: function (data) {
 			updatedData = data;
-			console.log(updatedData);
+			//console.log(updatedData);
 	    },
 	    dataType: "html"
 	});
@@ -22,19 +22,24 @@ function drawNodes(){
 	
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 	for(var x = 0; x < splitNodes.length; x ++){
+		var color  = "#00A308";
+		var size = 2;
 		var coords = splitNodes[x].split(',');
-		
+		if(x == splitNodes.length-1){
+			color = "#7700ff";
+			size = 4;
+		}
 		//draw a circle
 		ctx.beginPath();
-		ctx.fillStyle = "#00A308";
-		ctx.arc(coords[0],coords[1], 2, 0, Math.PI*2, true); 
+		ctx.fillStyle = color;
+		ctx.arc(coords[0],coords[1], size, 0, Math.PI*2, true); 
 		ctx.closePath();
 		ctx.fill();
 	}
 }
 
 function updateData(){
-	tid = setTimeout(updateData, 50); // repeat myself
+	tid = setTimeout(updateData, 25); // repeat myself
 	sendRequest();
 	//console.log(updatedData)
 	drawNodes();

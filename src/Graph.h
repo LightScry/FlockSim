@@ -33,6 +33,7 @@ class Graph {
 		void addNode(Node* n);
 		void addNode(vec &pos, vec &vel);
 		void addNode(dvec &pos, dvec &vel);
+		Node* newNodeRandom();
 		void addNodeRandom();
 		void removeNode(int index);
 	

@@ -2,6 +2,8 @@
 #define NODE_H
 #include "Vector.h"
 
+enum node_type { node_norm, node_goal, node_pred };
+
 class Node {
 	public:
 		vec pos;
@@ -12,6 +14,7 @@ class Node {
 		Node(dvec &p, dvec &v) : pos(p), vel(v) {}
 
 		std::string toString();
+		node_type type;
 };
 
 inline double distance(Node &a, Node&b){
