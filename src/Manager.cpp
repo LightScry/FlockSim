@@ -13,9 +13,9 @@
 typedef std::chrono::milliseconds milliseconds;
 
 // Static initialization
-double Manager::CurrentAlignment = 1.0 / 500;
-double Manager::CurrentSeparation = 1.0 / 500;
-double Manager::CurrentCohesion = 1.0 / 500;
+double Manager::CurrentAlignment = 10.0 / POS_BOUND;
+double Manager::CurrentSeparation = 1.0 / POS_BOUND;
+double Manager::CurrentCohesion = 2.0 / POS_BOUND;
 Graph Manager::g = Graph(NUM_NODES, CurrentSeparation, CurrentCohesion, CurrentAlignment, time(NULL));
 
 // Game loop Params
