@@ -24,7 +24,7 @@ Graph Manager::g;
 
 // Game loop Params
 int still_looping = 1;
-const int FPS = 60.0;
+const int FPS = 30.0;
 int tick = 0;
 pthread_t t;
 void* Manager::gameLoop(void *data){
@@ -106,7 +106,18 @@ void Manager::main(){
 			catch_thread();
 			Manager::init();
 		}
-		else if (command.compare("add_pred")){
+		else if (command.compare("add_pred") == 0){
+			if(splitStrVec.size() == 1)
+				Manager::g.addNodeRandom(node_pred);
+			else{
+				int numNodes;
+				std::stringstream(splitStrVec[1]) >> numNodes;
+				for(int x = 0; x < numNodes; x ++)
+					Manager::g.addNodeRandom(node_pred);
+			}
+			
+		}
+		else if (command.compare("add_goal") == 0){
 			if(splitStrVec.size() == 1)
 				Manager::g.addNodeRandom(node_goal);
 			else{
@@ -115,16 +126,15 @@ void Manager::main(){
 				for(int x = 0; x < numNodes; x ++)
 					Manager::g.addNodeRandom(node_goal);
 			}
-			
 		}
-		else if (command.compare("add_goal")){
+		else if (command.compare("add_node") == 0){
 			if(splitStrVec.size() == 1)
-				Manager::g.addNodeRandom(node_pred);
+				Manager::g.addNodeRandom(node_norm);
 			else{
 				int numNodes;
 				std::stringstream(splitStrVec[1]) >> numNodes;
 				for(int x = 0; x < numNodes; x ++)
-					Manager::g.addNodeRandom(node_pred);
+					Manager::g.addNodeRandom(node_norm);
 			}
 		}
 	}
