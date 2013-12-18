@@ -128,12 +128,18 @@ void Graph::updateVelocities(){
 		double totalWeight = 0.0;
 		double sepWeight = 0.0;
 		double fleeWeight = 0.0;
-		
+
 		for (int j=0; j<numNodes; j++){
 			if (j==i) continue;
 			
 			//do we need to run away?
 			if (nodes[j]->type==node_pred){
+				//are we eaten?
+				if (nodes[i]->type==node_norm)
+					if ((nodes[i]->pos-nodes[j]->pos).magnitude() < EAT_RADIUS){
+						removeNode(i--);
+						numNodes--;
+					}
 				avgFlee+=edges[i][j]*(nodes[i]->pos-nodes[j]->pos);
 				fleeWeight+=edges[i][j];
 				continue;
