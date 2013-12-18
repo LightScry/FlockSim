@@ -1,5 +1,7 @@
 #include "Graph.h"
 #include <cstdlib>
+#include <iostream>
+#include <math.h>
 
 void Graph::init(int numNodes){
 	//remove any existing nodes
@@ -30,6 +32,9 @@ void Graph::initRandom(int numNodes, unsigned int seed){
 	for(int i = 0;i < DIMENSION; i ++)
 		targetNode->vel[i] = 0;
 	addNode(targetNode);
+
+	// add predator node
+	addNodeRandom(node_pred);
 }
 
 void Graph::addNode(Node* n){
@@ -116,7 +121,7 @@ void Graph::updateVelocities(){
 		vec avgDisp;//average displacement (from nodes[i])
 		vec avgFlee; //run away from the predator(s)!
 
-	        double goalWeight = 1.2;
+	        double goalWeight = 1.0;
 		double totalWeight = 0.0;
 		double sepWeight = 0.0;
 		double fleeWeight = 0.0;
@@ -150,10 +155,7 @@ void Graph::updateVelocities(){
 			avgPos+=edges[i][j]*nodes[j]->pos;
 	
 			//weighting
-			if(nodes[i]->type == node_goal)
-				totalWeight+=edges[i][j] * goalWeight;
-			else if(nodes[i]->type == node_norm || nodes[i]->type == node_pred)
-				totalWeight+=edges[i][j]; // multiply by 1.0
+			totalWeight+=edges[i][j];
 		}
 
 		//algorithm, continued
@@ -165,22 +167,28 @@ void Graph::updateVelocities(){
 			//predator movement
 			if (nodes[i]->type==node_pred){
 				newVelocities[i]+=alg.cohesion*30.0*(avgPos-nodes[i]->pos);
-				normToMax(newVelocities[i], MAX_SPEED*1.1);
+				normToMax(newVelocities[i], MAX_SPEED*2);
 			}
 
 			//prey movement
 			else if (nodes[i]->type==node_norm){
+				//predator-fleeing
 				if (fleeWeight > 0.0){
 					avgFlee/=fleeWeight;
 					newVelocities[i]+=alg.flee*avgFlee;
 				}
+				//separation
 				if (sepWeight > 0.0){
 					avgDisp/=sepWeight;
 					newVelocities[i]+=alg.separation*avgDisp;
 				}
+				//cohesion and alignment
 				newVelocities[i]+=alg.cohesion*(avgPos-nodes[i]->pos);
 				newVelocities[i]+=alg.alignment*avgVel;
-				normToMax(newVelocities[i], MAX_SPEED);
+				//goal-seeking (avg path to goal with no-goal path)
+				newVelocities[i]+=alg.cohesion*(nodes[nodes.size()-2]->pos - avgPos) * goalWeight;
+				if (newVelocities[i].magnitude() > MAX_SPEED)
+					normToMax(newVelocities[i], MAX_SPEED);
 			}
 		}
 	}
@@ -194,16 +202,17 @@ void Graph::updateVelocities(){
 }
 
 void Graph::normToMax(vec& v, double max){
-	double mag = v.magnitude();
-	if (mag > max)
-		v*=(max/mag);
-	return;
+	v*=(max/v.magnitude());
 }
 
 void Graph::updatePositions(double timestep){
+	//Node* targetNode = nodes[nodes.size()-1];
+	//std::cout << "TARGET NODE:" << targetNode->pos[0] << "," << targetNode->pos[1] << std::endl;
 	for (int i=0; i<nodes.size(); i++){
+		if(nodes[i]->type == node_goal)	continue;	
+		
 		nodes[i]->pos+=timestep*nodes[i]->vel;
-
+		
 		//bound-checking
 		for (int j=0; j<DIMENSION; j++){
 			// Skip goal node

@@ -16,7 +16,7 @@
 typedef std::chrono::milliseconds milliseconds;
 
 // Static initialization
-double Manager::CurrentAlignment = 15.0 / POS_BOUND;
+double Manager::CurrentAlignment = 10.0 / POS_BOUND;
 double Manager::CurrentSeparation = 50.0 / POS_BOUND;
 double Manager::CurrentCohesion = 7.5 / POS_BOUND;
 double Manager::CurrentFlee = 200.0 / POS_BOUND;
@@ -24,7 +24,7 @@ Graph Manager::g;
 
 // Game loop Params
 int still_looping = 1;
-const int FPS = 30.0;
+const int FPS = 60.0;
 int tick = 0;
 pthread_t t;
 void* Manager::gameLoop(void *data){
@@ -33,7 +33,7 @@ void* Manager::gameLoop(void *data){
 		// NOTE: 	Sleeping thread here may prove VERY inefficient.
 		//			If performance issues happen, break into 2 threads
 		//			or don't use threads at all.
-		int time_to_sleep = 1000.0 / FPS;
+		int time_to_sleep = 500.0 / FPS;
 		tick ++;
 	   	std::this_thread::sleep_for(milliseconds(time_to_sleep));
 		
@@ -67,7 +67,6 @@ void Manager::init(){
 	//run simulation on another thread
     pthread_create(&t, NULL, Manager::gameLoop, NULL);
 	Manager::g = Graph(NUM_NODES, CurrentSeparation, CurrentCohesion, CurrentAlignment, CurrentFlee, time(NULL));
-	g.addNodeRandom(node_pred);
 }
 
 void Manager::main(){

@@ -25,10 +25,17 @@ function drawNodes(){
 		var color  = "#00A308";
 		var size = 2;
 		var coords = splitNodes[x].split(',');
-		if(x == splitNodes.length-1){
+		
+		// Target and predator nodes displayed differently
+		if(x == splitNodes.length-3){
 			color = "#7700ff";
-			size = 4;
+			size = 5;
 		}
+		if(x == splitNodes.length-2){
+			color = "#ff7700";
+			size = 3;
+		}
+		
 		//draw a circle
 		ctx.beginPath();
 		ctx.fillStyle = color;
