@@ -3,6 +3,7 @@
 #include "Node.h"
 #define VISION_RADIUS 50.0
 #define SEPARATION_RADIUS 10.0
+#define EAT_RADIUS 5.0
 
 class Algo { 
 	public:
