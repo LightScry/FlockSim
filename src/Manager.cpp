@@ -19,6 +19,7 @@ typedef std::chrono::milliseconds milliseconds;
 double Manager::CurrentAlignment = 10.0 / POS_BOUND;
 double Manager::CurrentSeparation = 50.0 / POS_BOUND;
 double Manager::CurrentCohesion = 7.5 / POS_BOUND;
+double Manager::CurrentFlee = 200.0 / POS_BOUND;
 Graph Manager::g;
 
 // Game loop Params
@@ -65,7 +66,7 @@ void Manager::init(){
 	still_looping = true;
 	//run simulation on another thread
     pthread_create(&t, NULL, Manager::gameLoop, NULL);
-	Manager::g = Graph(NUM_NODES, CurrentSeparation, CurrentCohesion, CurrentAlignment, time(NULL));
+	Manager::g = Graph(NUM_NODES, CurrentSeparation, CurrentCohesion, CurrentAlignment, CurrentFlee, time(NULL));
 }
 
 void Manager::main(){

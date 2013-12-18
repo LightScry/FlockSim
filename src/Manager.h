@@ -12,6 +12,7 @@ class Manager {
 	static double CurrentAlignment;
 	static double CurrentSeparation;
 	static double CurrentCohesion;
+	static double CurrentFlee;
 
 	static Graph g;
 

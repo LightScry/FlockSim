@@ -18,23 +18,27 @@ class Graph {
 
 	void updateVelocities();
 	void updatePositions(double timestep);
+	void normToMax(vec& v, double max);
 
 	public:
 		Graph() : alg() {}
 		Graph(double sep, double coh, double ali) : alg(sep,coh,ali) {}
+		Graph(double sep, double coh, double ali, double flee) : alg(sep,coh,ali,flee) {}
 		Graph(int numNodes) : alg() {init(numNodes);}
 		Graph(int numNodes, double sep, double coh, double ali) : alg(sep,coh,ali) {init(numNodes);}
+		Graph(int numNodes, double sep, double coh, double ali, double flee) : alg(sep,coh,ali,flee) {init(numNodes);}
 		Graph(int numNodes, double sep, double coh, double ali, unsigned int seed) : alg(sep,coh,ali) {initRandom(numNodes,seed);}
+		Graph(int numNodes, double sep, double coh, double ali, double flee, unsigned int seed) : alg(sep,coh,ali,flee) {initRandom(numNodes,seed);}
 
 		void init(int numNodes);
 		void initRandom(int numNodes, unsigned int seed);
 		
-		void addNode();
+		void addNode(node_type type);
 		void addNode(Node* n);
-		void addNode(vec &pos, vec &vel);
-		void addNode(dvec &pos, dvec &vel);
-		Node* newNodeRandom();
-		void addNodeRandom();
+		void addNode(vec &pos, vec &vel, node_type type);
+		void addNode(dvec &pos, dvec &vel, node_type type);
+		Node* newNodeRandom(node_type type);
+		void addNodeRandom(node_type type);
 		void removeNode(int index);
 	
 		void update(double timestep);

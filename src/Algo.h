@@ -1,7 +1,7 @@
 #ifndef ALGO_H
 #define ALGO_H
 #include "Node.h"
-#define VISION_RADIUS 200.0
+#define VISION_RADIUS 50.0
 #define SEPARATION_RADIUS 10.0
 
 class Algo { 
@@ -9,9 +9,11 @@ class Algo {
 		double separation;
 		double cohesion;
 		double alignment;
+		double flee;
 
-		Algo() : separation(), cohesion(), alignment() {}
-		Algo(double sep, double coh, double ali) : separation(sep), cohesion(coh), alignment (ali) {}
+		Algo() : separation(), cohesion(), alignment(), flee() {}
+		Algo(double sep, double coh, double ali) : separation(sep), cohesion(coh), alignment (ali), flee() {}
+		Algo(double sep, double coh, double ali, double fl) : separation(sep), cohesion(coh), alignment (ali), flee(fl) {}
 		double calcWeight(Node* a, Node* b);
 		double calcWeightSq(Node* a, Node* b);
 		double calcWeightVs(Node* a, Node* b);
