@@ -33,6 +33,8 @@ class Graph {
 		void init(int numNodes);
 		void initRandom(int numNodes, unsigned int seed);
 		
+		Node *findClosestGoal(Node *node);
+		
 		void addNode(node_type type);
 		void addNode(Node* n);
 		void addNode(vec &pos, vec &vel, node_type type);

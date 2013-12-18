@@ -28,13 +28,16 @@ void Graph::initRandom(int numNodes, unsigned int seed){
 	}
 	
 	// add target node
-	Node *targetNode = newNodeRandom(node_goal);
+	/*Node *targetNode = newNodeRandom(node_goal);
 	for(int i = 0;i < DIMENSION; i ++)
 		targetNode->vel[i] = 0;
 	addNode(targetNode);
+	
+	addNodeRandom(node_goal);
 
 	// add predator node
 	addNodeRandom(node_pred);
+	addNodeRandom(node_pred);*/
 }
 
 void Graph::addNode(Node* n){
@@ -186,7 +189,10 @@ void Graph::updateVelocities(){
 				newVelocities[i]+=alg.cohesion*(avgPos-nodes[i]->pos);
 				newVelocities[i]+=alg.alignment*avgVel;
 				//goal-seeking (avg path to goal with no-goal path)
-				newVelocities[i]+=alg.cohesion*(nodes[nodes.size()-2]->pos - avgPos) * goalWeight;
+				
+				Node *closestNode = findClosestGoal(nodes[i]);
+				if( closestNode != NULL )
+					newVelocities[i]+=alg.cohesion*(closestNode->pos - avgPos) * goalWeight;
 				if (newVelocities[i].magnitude() > MAX_SPEED)
 					normToMax(newVelocities[i], MAX_SPEED);
 			}
@@ -199,6 +205,19 @@ void Graph::updateVelocities(){
 	}
 
 	delete[] newVelocities;
+}
+
+Node *Graph::findClosestGoal(Node *node){
+	Node *closestGoal = NULL;
+	for(int x = 0; x < nodes.size(); x ++){
+		if( nodes[x]->type == node_goal ){
+			double newDist = distance(*node,*nodes[x]);
+			if(closestGoal == NULL || newDist < distance(*node,*closestGoal))
+				closestGoal = nodes[x];
+		}
+	}
+	
+	return closestGoal;
 }
 
 void Graph::normToMax(vec& v, double max){
@@ -275,8 +294,31 @@ void Graph::updateRandomMove(unsigned int seed){
 void Graph::writeNodes(std::string filename){
 	std::ofstream myfile;
 	myfile.open(filename);
-	for (Node* n : nodes){
+	std::vector<Node*> targetNodes;
+	std::vector<Node*> predatorNodes;
+	
+	// Pring & Organize
+	for (Node *n : nodes){
+		if(n->type == node_norm)
+			myfile << n->toString() << "|";
+		else if(n->type == node_goal)
+			targetNodes.push_back(n);
+		else if(n->type == node_pred)
+			predatorNodes.push_back(n);
+	}
+	
+	// Print goals
+	myfile << "@"; // ^ is the separator here
+	for(Node *n : targetNodes){
 		myfile << n->toString() << "|";
 	}
+	
+	// Print goals
+	myfile << "@"; // ^ is the separator here
+	for(Node *n : predatorNodes){
+		myfile << n->toString() << "|";
+	}
+	
+	
 	myfile.close();
 }

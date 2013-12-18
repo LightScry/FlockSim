@@ -17,31 +17,39 @@ function sendRequest(){
 	});
 }
 
+function drawNode( color,  size,  coords){
+	//draw a circle
+	ctx.beginPath();
+	ctx.fillStyle = color;
+	ctx.arc(coords[0],coords[1], size, 0, Math.PI*2, true); 
+	ctx.closePath();
+	ctx.fill();
+}
+
 function drawNodes(){
-	var splitNodes = updatedData.split('|');
+	var normalNodes = updatedData.split('@')[0].split('|');
+	var targetNodes = updatedData.split('@')[1].split('|');
+	var predatorNodes = updatedData.split('@')[2].split('|');
 	
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
-	for(var x = 0; x < splitNodes.length; x ++){
-		var color  = "#00A308";
-		var size = 2;
-		var coords = splitNodes[x].split(',');
-		
-		// Target and predator nodes displayed differently
-		if(x == splitNodes.length-3){
-			color = "#7700ff";
-			size = 5;
-		}
-		if(x == splitNodes.length-2){
-			color = "#ff7700";
-			size = 3;
-		}
-		
-		//draw a circle
-		ctx.beginPath();
-		ctx.fillStyle = color;
-		ctx.arc(coords[0],coords[1], size, 0, Math.PI*2, true); 
-		ctx.closePath();
-		ctx.fill();
+	
+	
+	// Draw normal nodes
+	for(var x = 0; x < normalNodes.length; x ++){
+		var coords = normalNodes[x].split(',');
+		drawNode("#7700ff",2,coords);
+	}
+	
+	// Draw predator nodes
+	for(var x = 0; x < predatorNodes.length; x ++){
+		var coords = predatorNodes[x].split(',');
+		drawNode("#00A308",5,coords);
+	}
+	
+	// Draw target nodes
+	for(var x = 0; x < targetNodes.length; x ++){
+		var coords = targetNodes[x].split(',');
+		drawNode("#ff7700",5,coords);
 	}
 }
 

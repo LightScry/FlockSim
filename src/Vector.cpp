@@ -54,7 +54,7 @@ std::string vec::toString(){
 	//ss << "(";
 	for (int i=0; i<DIMENSION-1; i++)
 		ss << d[i] << ",";
-	ss << d[DIMENSION-1]; // << ")";
+	ss << d[DIMENSION-1];
 
 	std::string retString;
 	ss >> retString;

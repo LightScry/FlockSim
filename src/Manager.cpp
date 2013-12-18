@@ -69,6 +69,22 @@ void Manager::init(){
 	Manager::g = Graph(NUM_NODES, CurrentSeparation, CurrentCohesion, CurrentAlignment, CurrentFlee, time(NULL));
 }
 
+std::vector<std::string> &split(const std::string &s, char delim, std::vector<std::string> &elems) {
+    std::stringstream ss(s);
+    std::string item;
+    while (std::getline(ss, item, delim)) {
+        elems.push_back(item);
+    }
+    return elems;
+}
+
+
+std::vector<std::string> split(const std::string &s, char delim) {
+    std::vector<std::string> elems;
+    split(s, delim, elems);
+    return elems;
+}
+
 void Manager::main(){
 	Manager::init();
 	
@@ -77,16 +93,39 @@ void Manager::main(){
 		std::cout << "Enter Command: ";
 		std::cin >> input;
 		//std::cout << "out:" << input.compare("exit") << std::endl;
+		std::vector<std::string> splitStrVec = split(input,',');
+		std::string command = splitStrVec[0];
 		
-		if (input.compare("exit") == 0){
+		if (command.compare("exit") == 0){
 			still_looping = false;
 			catch_thread();
 			break;
 		}
-		else if (input.compare("restart") == 0){
+		else if (command.compare("restart") == 0){
 			still_looping = false;
 			catch_thread();
 			Manager::init();
+		}
+		else if (command.compare("add_pred")){
+			if(splitStrVec.size() == 1)
+				Manager::g.addNodeRandom(node_goal);
+			else{
+				int numNodes;
+				std::stringstream(splitStrVec[1]) >> numNodes;
+				for(int x = 0; x < numNodes; x ++)
+					Manager::g.addNodeRandom(node_goal);
+			}
+			
+		}
+		else if (command.compare("add_goal")){
+			if(splitStrVec.size() == 1)
+				Manager::g.addNodeRandom(node_pred);
+			else{
+				int numNodes;
+				std::stringstream(splitStrVec[1]) >> numNodes;
+				for(int x = 0; x < numNodes; x ++)
+					Manager::g.addNodeRandom(node_pred);
+			}
 		}
 	}
 	
