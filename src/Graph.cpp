@@ -104,6 +104,7 @@ void Graph::removeNode(int index){
 void Graph::updateVelocities(){
 	int numNodes = nodes.size();
 	vec* newVelocities = new vec[numNodes];
+	std::vector<int> removeNodes;
 	
 	//first loop through nodes and assign weights
 	for (int i=0; i<numNodes; i++){
@@ -124,7 +125,9 @@ void Graph::updateVelocities(){
 		vec avgDisp;//average displacement (from nodes[i])
 		vec avgFlee; //run away from the predator(s)!
 
-	        double goalWeight = 1.0;
+		
+		
+	    double goalWeight = 1.0;
 		double totalWeight = 0.0;
 		double sepWeight = 0.0;
 		double fleeWeight = 0.0;
@@ -137,8 +140,7 @@ void Graph::updateVelocities(){
 				//are we eaten?
 				if (nodes[i]->type==node_norm)
 					if ((nodes[i]->pos-nodes[j]->pos).magnitude() < EAT_RADIUS){
-						removeNode(i--);
-						numNodes--;
+						removeNodes.push_back(i);
 					}
 				avgFlee+=edges[i][j]*(nodes[i]->pos-nodes[j]->pos);
 				fleeWeight+=edges[i][j];
@@ -209,6 +211,15 @@ void Graph::updateVelocities(){
 	for (int i=0; i<numNodes; i++){
 		nodes[i]->vel=newVelocities[i];
 	}
+	
+	// Remove marked nodes
+	int offset = 0;
+	for(int x = 0; x < removeNodes.size(); x ++){
+		removeNode(removeNodes[x] - offset);
+		numNodes--;
+		offset++;
+	}
+	
 
 	delete[] newVelocities;
 }
